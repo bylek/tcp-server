@@ -29,19 +29,9 @@ accept_state(LSocket) ->
 handler(ASocket) ->
   inet:setopts(ASocket, [{active,once}]),
   receive
-    {tcp, ASocket, <<"quit">>} ->
+    {tcp, ASocket, <<"quit", _/binary>>} ->
       gen_tcp:close(ASocket);
-    {tcp, ASocket, <<"value=",X/binary>>} ->
-      Value = list_to_integer(binary_to_list(X)),
-      Return = Value * Value,
-      gen_tcp:send(ASocket, "Result square: "++list_to_binary(integer_to_list(Return))),
-      handler(ASocket);
-    {tcp, ASocket, BinaryMsg} ->
-      if
-        (BinaryMsg =:= <<"Ping">>) ->
-          gen_tcp:send(ASocket, "Pong");
-        true ->
-          gen_tcp:send(ASocket, "Huh?")
-      end,
+    {tcp, ASocket, Msg} ->
+      gen_tcp:send(ASocket, Msg),
       handler(ASocket)
   end.
