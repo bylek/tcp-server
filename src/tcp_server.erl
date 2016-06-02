@@ -15,7 +15,7 @@
 
 start_server() ->
   Pid = spawn_link(fun() ->
-    {ok, LSocket} = gen_tcp:listen(?Port, [binary, {active, false}]),
+    {ok, LSocket} = gen_tcp:listen(?Port, [binary, {packet, 2}, {active, false}, {reuseaddr, true}]),
     spawn(fun() -> accept_state(LSocket) end),
     timer:sleep(infinity)
   end),
@@ -29,8 +29,6 @@ accept_state(LSocket) ->
 handler(ASocket) ->
   inet:setopts(ASocket, [{active,once}]),
   receive
-    {tcp, ASocket, <<"quit", _/binary>>} ->
-      gen_tcp:close(ASocket);
     {tcp, ASocket, Msg} ->
       gen_tcp:send(ASocket, Msg),
       handler(ASocket)
