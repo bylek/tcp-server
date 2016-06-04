@@ -10,12 +10,11 @@
 -author("bylek").
 
 %% API
--export([start_server/0]).
--define(Port, 9000).
+-export([start_server/1]).
 
-start_server() ->
+start_server(Port) ->
   Pid = spawn_link(fun() ->
-    {ok, LSocket} = gen_tcp:listen(?Port, [binary, {packet, 2}, {active, false}, {reuseaddr, true}]),
+    {ok, LSocket} = gen_tcp:listen(Port, [binary, {packet, 2}, {active, false}, {reuseaddr, true}]),
     spawn(fun() -> accept_state(LSocket) end),
     timer:sleep(infinity)
   end),
