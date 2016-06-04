@@ -14,7 +14,7 @@
 
 start_server(Port) ->
   Pid = spawn_link(fun() ->
-    {ok, LSocket} = gen_tcp:listen(Port, [binary, {packet, 2}, {active, false}, {reuseaddr, true}]),
+    {ok, LSocket} = gen_tcp:listen(Port, [binary, {packet, 0}, {active, false}]),
     spawn(fun() -> accept_state(LSocket) end),
     timer:sleep(infinity)
   end),
